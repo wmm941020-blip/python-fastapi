@@ -40,7 +40,8 @@ jobs:
           file: ./backend/Dockerfile
           # Celery worker is also included in the backend image
           # You can run it by overriding the command: celery -A celery_worker.celery worker ...
-          push: ${{ github.event_name != 'pull_request' && env.DOCKER_USERNAME != '' }}
+          # Only push when event is 'push' (e.g. merge to main), otherwise just build
+          push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.DOCKER_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:latest
             ${{ env.DOCKER_USERNAME }}/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
@@ -52,7 +53,8 @@ jobs:
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
-          push: ${{ github.event_name != 'pull_request' && env.DOCKER_USERNAME != '' }}
+          # Only push when event is 'push' (e.g. merge to main), otherwise just build
+          push: ${{ github.event_name == 'push' }}
           tags: |
             ${{ env.DOCKER_USERNAME }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
             ${{ env.DOCKER_USERNAME }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
